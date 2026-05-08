@@ -1,9 +1,9 @@
-task Tests {
+Add-BuildTask Tests {
     $testPath = (Resolve-Path (Join-Path $PSScriptRoot 'Tests')).Path
     Invoke-Pester -Path $testPath -EnableExit
 }
 
-task Lint {
+Add-BuildTask Lint {
     $findings = Invoke-ScriptAnalyzer $PSScriptRoot -IncludeDefaultRules
 
     if ($findings) {
@@ -12,9 +12,9 @@ task Lint {
     }
 }
 
-task Manifest {
+Add-BuildTask Manifest {
     Test-ModuleManifest -Path "$PSScriptRoot\PSPiHole.psd1" > $null
 }
 
 
-task Validate Tests, Lint
+Add-BuildTask Validate Tests, Lint
