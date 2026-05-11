@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.3
+- Added allow/deny exact/regex domain management cmdlets
+
 ## 0.1.2
 - Added gallery metadata to the module manifest for release publishing
 

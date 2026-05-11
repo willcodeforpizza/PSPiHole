@@ -30,10 +30,17 @@
     Invoke-Build -File ./Tasks/Publish.ps1
     ```
 #>
-[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', 'ModuleOutputRoot', Justification = 'Used by dot-sourced release tasks.')]
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute(
+    'PSReviewUnusedParameter',
+    'ModuleOutputRoot',
+    Justification = 'Used by dot-sourced release tasks.'
+)]
 param(
     [string]$ModuleRoot = (Split-Path $PSScriptRoot -Parent),
-    [string]$ModuleName = ((Get-ChildItem -Path $ModuleRoot -Filter '*.psd1' -File -ErrorAction SilentlyContinue | Select-Object -First 1).BaseName),
+    [string]$ModuleName = ((
+        Get-ChildItem -Path $ModuleRoot -Filter '*.psd1' -File -ErrorAction SilentlyContinue |
+            Select-Object -First 1
+    ).BaseName),
     [string]$ModuleOutputRoot = (Join-Path ([System.IO.Path]::GetTempPath()) $ModuleName)
 )
 

@@ -32,7 +32,10 @@ if (-not $ModuleName) {
         Select-Object -First 1).BaseName
 }
 if (-not $ModuleName) {
-    throw "Could not auto-discover module name (no *.psd1 found in '$ModuleRoot'). Set `$ModuleName before invoking."
+    throw (
+        "Could not auto-discover module name (no *.psd1 found in '$ModuleRoot'). " +
+        'Set $ModuleName before invoking.'
+    )
 }
 
 Add-BuildTask -Name PublishRelease -Jobs {
