@@ -5,7 +5,7 @@ function Add-PiholeDnsRecord {
 
     .DESCRIPTION
         Sends PUT /api/config/dns/hosts/{record} where {record} is a
-        URL-encoded "IP Hostname" pair. Pi-hole accepts the PUT idempotently —
+        URL-encoded "IP Hostname" pair. Pi-hole accepts the PUT idempotently -
         re-adding an existing record is a no-op.
 
         Pipeline-bound on Hostname and IPAddress so output from

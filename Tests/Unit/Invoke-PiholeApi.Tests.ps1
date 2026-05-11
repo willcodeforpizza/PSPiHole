@@ -1,3 +1,10 @@
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute(
+    'PSAvoidUsingConvertToSecureStringWithPlainText',
+    '',
+    Justification = 'Unit tests use deterministic fake credentials only.'
+)]
+param()
+
 BeforeAll {
     Import-Module "$PSScriptRoot/../../PSPiHole.psd1" -Force
     . "$PSScriptRoot/_Common.ps1"
@@ -23,7 +30,10 @@ Describe 'Invoke-PiholeApi (private)' {
                     Server               = 'pihole.test'
                     BaseUri              = 'https://pihole.test/api'
                     SkipCertificateCheck = $false
-                    Credential           = [pscredential]::new('pihole', (ConvertTo-SecureString 'pw' -AsPlainText -Force))
+                    Credential           = [pscredential]::new(
+                        'pihole',
+                        (ConvertTo-SecureString 'pw' -AsPlainText -Force)
+                    )
                     Session              = $null
                 }
 
@@ -51,7 +61,10 @@ Describe 'Invoke-PiholeApi (private)' {
                     BaseUri              = 'https://pihole.test/api'
                     Server               = 'pihole.test'
                     SkipCertificateCheck = $false
-                    Credential           = [pscredential]::new('pihole', (ConvertTo-SecureString 'pw' -AsPlainText -Force))
+                    Credential           = [pscredential]::new(
+                        'pihole',
+                        (ConvertTo-SecureString 'pw' -AsPlainText -Force)
+                    )
                     Session              = [pscustomobject]@{
                         Sid = 'cached-sid'; Csrf = 'cached'; Validity = 1800; AuthedAt = Get-Date
                     }
@@ -73,7 +86,14 @@ Describe 'Invoke-PiholeApi (private)' {
                 $script:sessionCallCount = 0
                 Mock Invoke-RestMethod -ParameterFilter {$Uri -match '/auth$'} -MockWith {
                     $script:sessionCallCount++
-                    @{session = @{valid = $true; sid = "sid-$script:sessionCallCount"; csrf = 'c'; validity = 1800}}
+                    @{
+                        session = @{
+                            valid    = $true
+                            sid      = "sid-$script:sessionCallCount"
+                            csrf     = 'c'
+                            validity = 1800
+                        }
+                    }
                 }
 
                 $script:dnsCallCount = 0
@@ -92,7 +112,10 @@ Describe 'Invoke-PiholeApi (private)' {
                     BaseUri              = 'https://pihole.test/api'
                     Server               = 'pihole.test'
                     SkipCertificateCheck = $false
-                    Credential           = [pscredential]::new('pihole', (ConvertTo-SecureString 'pw' -AsPlainText -Force))
+                    Credential           = [pscredential]::new(
+                        'pihole',
+                        (ConvertTo-SecureString 'pw' -AsPlainText -Force)
+                    )
                     Session              = [pscustomobject]@{
                         Sid = 'stale-sid'; Csrf = 'c'; Validity = 1800; AuthedAt = Get-Date
                     }
@@ -122,7 +145,10 @@ Describe 'Invoke-PiholeApi (private)' {
                     BaseUri              = 'https://pihole.test/api'
                     Server               = 'pihole.test'
                     SkipCertificateCheck = $false
-                    Credential           = [pscredential]::new('pihole', (ConvertTo-SecureString 'pw' -AsPlainText -Force))
+                    Credential           = [pscredential]::new(
+                        'pihole',
+                        (ConvertTo-SecureString 'pw' -AsPlainText -Force)
+                    )
                     Session              = [pscustomobject]@{
                         Sid = 's'; Csrf = 'c'; Validity = 1800; AuthedAt = Get-Date
                     }
@@ -149,7 +175,10 @@ Describe 'Invoke-PiholeApi (private)' {
                     BaseUri              = 'https://pihole.test/api'
                     Server               = 'pihole.test'
                     SkipCertificateCheck = $false
-                    Credential           = [pscredential]::new('pihole', (ConvertTo-SecureString 'pw' -AsPlainText -Force))
+                    Credential           = [pscredential]::new(
+                        'pihole',
+                        (ConvertTo-SecureString 'pw' -AsPlainText -Force)
+                    )
                     Session              = [pscustomobject]@{
                         Sid = 's'; Csrf = 'c'; Validity = 1800; AuthedAt = Get-Date
                     }
@@ -174,7 +203,10 @@ Describe 'Invoke-PiholeApi (private)' {
                     BaseUri              = 'https://pihole.test/api'
                     Server               = 'pihole.test'
                     SkipCertificateCheck = $true
-                    Credential           = [pscredential]::new('pihole', (ConvertTo-SecureString 'pw' -AsPlainText -Force))
+                    Credential           = [pscredential]::new(
+                        'pihole',
+                        (ConvertTo-SecureString 'pw' -AsPlainText -Force)
+                    )
                     Session              = [pscustomobject]@{
                         Sid = 's'; Csrf = 'c'; Validity = 1800; AuthedAt = Get-Date
                     }

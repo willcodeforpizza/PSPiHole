@@ -2,11 +2,31 @@
 # inside its BeforeAll, so it runs after the module is imported.
 
 function New-PiholeTestCredential {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute(
+        'PSUseShouldProcessForStateChangingFunctions',
+        '',
+        Justification = 'Unit test factory only creates an in-memory credential object.'
+    )]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute(
+        'PSAvoidUsingPlainTextForPassword',
+        'Password',
+        Justification = 'Unit tests use deterministic fake passwords only.'
+    )]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute(
+        'PSAvoidUsingConvertToSecureStringWithPlainText',
+        '',
+        Justification = 'Unit tests use deterministic fake passwords only.'
+    )]
     param([string]$Password = 'pw')
     [pscredential]::new('pihole', (ConvertTo-SecureString $Password -AsPlainText -Force))
 }
 
 function New-PiholeTestContext {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute(
+        'PSUseShouldProcessForStateChangingFunctions',
+        '',
+        Justification = 'Unit test factory only creates an in-memory context object.'
+    )]
     param(
         [string]$Server = 'pihole.test',
         [switch]$WithSession,
@@ -36,6 +56,13 @@ function New-PiholeTestContext {
 }
 
 function New-Pihole401Exception {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute(
+        'PSUseShouldProcessForStateChangingFunctions',
+        '',
+        Justification = 'Unit test factory only creates an in-memory exception object.'
+    )]
+    param()
+
     # Fakes the shape Invoke-PiholeApi inspects: $_.Exception.Response.StatusCode.
     # Constructing a real HttpResponseException is awkward in tests; a
     # NoteProperty-decorated exception is enough for the catch-block check.
@@ -46,5 +73,12 @@ function New-Pihole401Exception {
 }
 
 function Reset-PiholeModuleState {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute(
+        'PSUseShouldProcessForStateChangingFunctions',
+        '',
+        Justification = 'Unit test helper intentionally resets module-scoped test state.'
+    )]
+    param()
+
     InModuleScope PSPiHole {$script:PiholeContext = $null}
 }

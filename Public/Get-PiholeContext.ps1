@@ -5,7 +5,7 @@ function Get-PiholeContext {
 
     .DESCRIPTION
         Returns a sanitised view of $script:PiholeContext. The credential
-        itself is never emitted — callers see HasCredential / SessionActive
+        itself is never emitted - callers see HasCredential / SessionActive
         flags instead. Returns nothing if no context is set.
 
     .EXAMPLE

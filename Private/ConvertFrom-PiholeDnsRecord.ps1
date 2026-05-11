@@ -20,6 +20,7 @@ function ConvertFrom-PiholeDnsRecord {
         Returns '192.168.10.91%20pihole1.lan'.
     #>
     [CmdletBinding()]
+    [OutputType([string])]
     param(
         [Parameter(Mandatory)]
         [string]
