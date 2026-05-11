@@ -1,20 +1,19 @@
-Add-BuildTask Tests {
-    $testPath = (Resolve-Path (Join-Path $PSScriptRoot 'Tests')).Path
+$script:moduleRoot = $PSScriptRoot
+
+Add-BuildTask -Name . -Jobs Validate
+
+Add-BuildTask -Name Validate -Jobs Test, Analyze
+
+Add-BuildTask -Name Test -Jobs {
+    $testPath = (Resolve-Path (Join-Path $script:moduleRoot 'Tests')).Path
     Invoke-Pester -Path $testPath -EnableExit
 }
 
-Add-BuildTask Lint {
-    $findings = Invoke-ScriptAnalyzer $PSScriptRoot -IncludeDefaultRules
+Add-BuildTask -Name Analyze -Jobs {
+    $findings = Invoke-ScriptAnalyzer $script:moduleRoot -IncludeDefaultRules -Recurse
 
     if ($findings) {
         $findings | Format-Table | Out-String
-        Write-Error "PSSA errors found"
+        Write-Error 'PSSA errors found'
     }
 }
-
-Add-BuildTask Manifest {
-    Test-ModuleManifest -Path "$PSScriptRoot\PSPiHole.psd1" > $null
-}
-
-
-Add-BuildTask Validate Tests, Lint
