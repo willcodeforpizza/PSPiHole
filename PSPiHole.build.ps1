@@ -108,7 +108,11 @@ function Test-PSServiceDeskYamlFile {
         throw 'ConvertFrom-Yaml is required. Install the powershell-yaml module.'
     }
 
-    Get-Content -Path $Path -Raw | ConvertFrom-Yaml > $null
+    try {
+        Get-Content -Path $Path -Raw | ConvertFrom-Yaml > $null
+    } catch {
+        throw "YAML file '$Path' is invalid. $($PSItem.Exception.Message)"
+    }
 }
 
 Add-BuildTask . Validate
