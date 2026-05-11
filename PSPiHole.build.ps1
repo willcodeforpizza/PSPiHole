@@ -110,6 +110,7 @@ function Test-PSServiceDeskYamlFile {
     }
 
     $lineNumber = 0
+    $blockScalarIndent = $null
     foreach ($line in Get-Content -Path $Path) {
         $lineNumber++
 
@@ -122,6 +123,14 @@ function Test-PSServiceDeskYamlFile {
         }
 
         $leadingSpaceCount = ($line.Length - $line.TrimStart(' ').Length)
+        if ($null -ne $blockScalarIndent) {
+            if ($leadingSpaceCount -gt $blockScalarIndent) {
+                continue
+            }
+
+            $blockScalarIndent = $null
+        }
+
         if ($leadingSpaceCount % 2 -ne 0) {
             throw "YAML file '$Path' has odd indentation on line $lineNumber."
         }
@@ -129,6 +138,10 @@ function Test-PSServiceDeskYamlFile {
         if ($line -notmatch '^\s*(-\s+)?[A-Za-z][A-Za-z0-9_-]*:\s*.*$' -and
             $line -notmatch '^\s*-\s+[A-Za-z0-9_-]+\s*$') {
             throw "YAML file '$Path' has unsupported syntax on line $lineNumber."
+        }
+
+        if ($line -match ':\s*[|>]\s*$') {
+            $blockScalarIndent = $leadingSpaceCount
         }
     }
 }
