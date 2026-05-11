@@ -93,7 +93,7 @@ function Get-CoveragePercent {
 function Test-PSServiceDeskYamlFile {
     <#
         .SYNOPSIS
-        Performs lightweight YAML syntax validation for demo config files.
+        Performs YAML syntax validation for repository YAML files.
     #>
 
     [CmdletBinding()]
@@ -104,45 +104,14 @@ function Test-PSServiceDeskYamlFile {
         $Path
     )
 
-    if ($null -ne (Get-Command -Name ConvertFrom-Yaml -ErrorAction SilentlyContinue)) {
-        Get-Content -Path $Path -Raw | ConvertFrom-Yaml > $null
-        return
+    if ($null -eq (Get-Command -Name ConvertFrom-Yaml -ErrorAction SilentlyContinue)) {
+        throw 'ConvertFrom-Yaml is required. Install the powershell-yaml module.'
     }
 
-    $lineNumber = 0
-    $blockScalarIndent = $null
-    foreach ($line in Get-Content -Path $Path) {
-        $lineNumber++
-
-        if ($line -match '\t') {
-            throw "YAML file '$Path' contains a tab on line $lineNumber."
-        }
-
-        if ($line -match '^\s*$' -or $line -match '^\s*#') {
-            continue
-        }
-
-        $leadingSpaceCount = ($line.Length - $line.TrimStart(' ').Length)
-        if ($null -ne $blockScalarIndent) {
-            if ($leadingSpaceCount -gt $blockScalarIndent) {
-                continue
-            }
-
-            $blockScalarIndent = $null
-        }
-
-        if ($leadingSpaceCount % 2 -ne 0) {
-            throw "YAML file '$Path' has odd indentation on line $lineNumber."
-        }
-
-        if ($line -notmatch '^\s*(-\s+)?[A-Za-z][A-Za-z0-9_-]*:\s*.*$' -and
-            $line -notmatch '^\s*-\s+[A-Za-z0-9_-]+\s*$') {
-            throw "YAML file '$Path' has unsupported syntax on line $lineNumber."
-        }
-
-        if ($line -match ':\s*[|>]\s*$') {
-            $blockScalarIndent = $leadingSpaceCount
-        }
+    try {
+        Get-Content -Path $Path -Raw | ConvertFrom-Yaml > $null
+    } catch {
+        throw "YAML file '$Path' is invalid. $($PSItem.Exception.Message)"
     }
 }
 

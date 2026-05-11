@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.2
+## 0.1.3
 - Added gallery metadata to the module manifest for release publishing
 
 ## 0.1.1
