@@ -22,8 +22,7 @@ jobs:
         run: |
           Set-PSRepository PSGallery -InstallationPolicy Trusted
           Install-Module Pester -MinimumVersion 5.7.0 -Scope CurrentUser -Force -SkipPublisherCheck
-          Install-Module PSScriptAnalyzer -Scope CurrentUser -Force
-          Install-Module InvokeBuild -Scope CurrentUser -Force
+          Install-Module PSScriptAnalyzer, InvokeBuild, powershell-yaml -Scope CurrentUser -Force
 
       - name: Run Validate
         shell: pwsh
