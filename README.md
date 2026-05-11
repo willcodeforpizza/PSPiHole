@@ -63,3 +63,21 @@ Local DNS host records (Pi-hole's `config/dns/hosts`) as PowerShell objects: eac
 | `Get-PiholeDnsRecord` | List all local DNS records. Optional `-Hostname` wildcard filter applied client-side. |
 | `Add-PiholeDnsRecord` | Add a host record. Idempotent on the Pi-hole side. |
 | `Remove-PiholeDnsRecord` | Remove a host record.|
+
+## Domain Functions
+
+Allow and deny entries from Pi-hole's domain management API (`/domains`) as PowerShell objects. Use `-Type allow|deny` and `-Kind exact|regex` to target the list you want.
+
+```powershell
+Get-PiholeDomain -Type deny -Kind exact
+Add-PiholeDomain -Type deny -Kind exact -Domain ads.example.com -Comment 'Nope'
+Set-PiholeDomain -Type deny -Kind exact -Domain ads.example.com -Enabled:$false
+Get-PiholeDomain -Type allow -Kind regex | Remove-PiholeDomain
+```
+
+| Function | Purpose |
+|---|---|
+| `Get-PiholeDomain` | List allow/deny domains. Optional `-Type`, `-Kind`, and `-Domain` filters are sent to the API. |
+| `Add-PiholeDomain` | Add one or more exact or regex domains with optional comment, group IDs, and enabled state. |
+| `Set-PiholeDomain` | Update comment, group IDs, enabled state, or move an entry between allow/deny and exact/regex lists. |
+| `Remove-PiholeDomain` | Remove an exact or regex domain. |

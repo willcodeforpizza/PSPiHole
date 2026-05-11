@@ -8,7 +8,7 @@
 
     The PowerShell Gallery API key is read from `PSGALLERY_API_KEY`.
 
-    By default this task runs with `-WhatIf`. Set `PSGALLERY_PUBLISH_CONFIRM`
+    By default this task runs with -WhatIf. Set PSGALLERY_PUBLISH_CONFIRM
     to `true` to publish for real.
 
     .RUN
