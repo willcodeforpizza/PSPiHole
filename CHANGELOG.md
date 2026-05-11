@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1
+- Fixed release tasks so dry-run publishing does not require a PowerShell Gallery API key
+- Publish to PowerShell Gallery before creating the GitHub release in the full release workflow
+- Exclude internal release tasks from the packaged module output
+
 ## 0.1.0
 - Initial module scaffold
 - Context-based auth (`Set-/Get-/Clear-PiholeContext`) with lazy session and transparent 401 retry
