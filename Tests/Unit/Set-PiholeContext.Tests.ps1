@@ -1,3 +1,10 @@
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute(
+    'PSAvoidUsingConvertToSecureStringWithPlainText',
+    '',
+    Justification = 'Unit tests use deterministic fake credentials only.'
+)]
+param()
+
 BeforeAll {
     Import-Module "$PSScriptRoot/../../PSPiHole.psd1" -Force
     . "$PSScriptRoot/_Common.ps1"

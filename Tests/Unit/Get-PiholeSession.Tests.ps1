@@ -1,3 +1,10 @@
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute(
+    'PSAvoidUsingConvertToSecureStringWithPlainText',
+    '',
+    Justification = 'Unit tests use deterministic fake credentials only.'
+)]
+param()
+
 BeforeAll {
     Import-Module "$PSScriptRoot/../../PSPiHole.psd1" -Force
     . "$PSScriptRoot/_Common.ps1"
@@ -19,7 +26,10 @@ Describe 'Get-PiholeSession (private)' {
                 Server               = 'pihole.test'
                 BaseUri              = 'https://pihole.test/api'
                 SkipCertificateCheck = $false
-                Credential           = [pscredential]::new('pihole', (ConvertTo-SecureString 'mypw' -AsPlainText -Force))
+                Credential           = [pscredential]::new(
+                    'pihole',
+                    (ConvertTo-SecureString 'mypw' -AsPlainText -Force)
+                )
                 Session              = $null
             }
 
@@ -48,7 +58,10 @@ Describe 'Get-PiholeSession (private)' {
                 BaseUri              = 'https://pihole.test/api'
                 Server               = 'pihole.test'
                 SkipCertificateCheck = $false
-                Credential           = [pscredential]::new('pihole', (ConvertTo-SecureString 'bad' -AsPlainText -Force))
+                Credential           = [pscredential]::new(
+                    'pihole',
+                    (ConvertTo-SecureString 'bad' -AsPlainText -Force)
+                )
             }
 
             {Get-PiholeSession -Context $ctx} | Should -Throw '*authentication failed*'
@@ -65,7 +78,10 @@ Describe 'Get-PiholeSession (private)' {
                 BaseUri              = 'https://pihole.test/api'
                 Server               = 'pihole.test'
                 SkipCertificateCheck = $true
-                Credential           = [pscredential]::new('pihole', (ConvertTo-SecureString 'pw' -AsPlainText -Force))
+                Credential           = [pscredential]::new(
+                    'pihole',
+                    (ConvertTo-SecureString 'pw' -AsPlainText -Force)
+                )
             }
 
             Get-PiholeSession -Context $ctx | Out-Null

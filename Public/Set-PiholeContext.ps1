@@ -16,7 +16,7 @@ function Set-PiholeContext {
 
     .PARAMETER Credential
         PSCredential whose Password is the Pi-hole web/app password. The
-        username is ignored — Pi-hole has no username concept.
+        username is ignored - Pi-hole has no username concept.
 
     .PARAMETER Password
         SecureString password. Alternative to -Credential.
@@ -40,7 +40,12 @@ function Set-PiholeContext {
         Picks up the password from the environment and trusts the Pi-hole's
         self-signed cert.
     #>
-    [CmdletBinding(DefaultParameterSetName = 'Credential')]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute(
+        'PSAvoidUsingConvertToSecureStringWithPlainText',
+        '',
+        Justification = 'PIHOLE_PASSWORD is a documented plaintext environment variable fallback.'
+    )]
+    [CmdletBinding(DefaultParameterSetName = 'Credential', SupportsShouldProcess)]
     param(
         [Parameter(Mandatory)]
         [string]
@@ -73,16 +78,18 @@ function Set-PiholeContext {
 
     if ($Password) {$Credential = [pscredential]::new('pihole', $Password)}
 
-    $script:PiholeContext = [pscustomobject]@{
-        PSTypeName           = 'PSPiHole.Context'
-        Server               = $Server
-        BaseUri              = "https://$Server/api"
-        SkipCertificateCheck = [bool]$SkipCertificateCheck
-        Credential           = $Credential
-        Session              = $null
-    }
+    if ($PSCmdlet.ShouldProcess($Server, 'Set Pi-hole context')) {
+        $script:PiholeContext = [pscustomobject]@{
+            PSTypeName           = 'PSPiHole.Context'
+            Server               = $Server
+            BaseUri              = "https://$Server/api"
+            SkipCertificateCheck = [bool]$SkipCertificateCheck
+            Credential           = $Credential
+            Session              = $null
+        }
 
-    if ($PassThru) {
-        $script:PiholeContext
+        if ($PassThru) {
+            $script:PiholeContext
+        }
     }
 }

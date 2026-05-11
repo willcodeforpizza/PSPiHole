@@ -30,7 +30,12 @@ Describe 'ConvertTo-PiholeDnsRecord (private)' {
 
     It 'warns and emits nothing for malformed input' {
         InModuleScope PSPiHole {
-            $rec = ConvertTo-PiholeDnsRecord -InputObject 'no-spaces-here' -WarningVariable warns -WarningAction SilentlyContinue
+            $convertSplat = @{
+                InputObject   = 'no-spaces-here'
+                WarningVariable = 'warns'
+                WarningAction = 'SilentlyContinue'
+            }
+            $rec = ConvertTo-PiholeDnsRecord @convertSplat
             $rec   | Should -BeNullOrEmpty
             $warns | Should -Not -BeNullOrEmpty
         }

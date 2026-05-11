@@ -6,7 +6,7 @@ function Clear-PiholeContext {
     .DESCRIPTION
         If the current context has an active session, fires a best-effort
         DELETE /api/auth so Pi-hole can drop the sid server-side. The local
-        context is then cleared regardless of whether the DELETE succeeded —
+        context is then cleared regardless of whether the DELETE succeeded -
         the worst that happens is an orphaned session that expires naturally.
 
     .EXAMPLE
