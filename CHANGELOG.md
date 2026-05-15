@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.5
+- Fixed release workflow setup for PSResourceGet repository publishing
+
 ## 0.1.4
 - Changed release automation to use Plumber.Release
 
