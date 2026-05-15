@@ -23,7 +23,7 @@
     ModuleList = @(
         @{
             ModuleName = 'Plumber'
-            ModuleVersion = '0.0.27'
+            ModuleVersion = '0.0.29'
         }
         @{
             ModuleName = 'Plumber.Release'
