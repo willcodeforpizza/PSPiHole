@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.4
+- Changed release automation to use Plumber.Release
+
 ## 0.1.3
 - Added allow/deny exact/regex domain management cmdlets
 
