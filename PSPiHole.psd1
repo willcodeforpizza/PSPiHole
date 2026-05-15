@@ -1,6 +1,6 @@
 @{
     RootModule = 'PSPiHole.psm1'
-    ModuleVersion = '0.1.4'
+    ModuleVersion = '0.1.5'
     GUID = '828c7782-4c83-429a-9d3a-c82eb174c0de'
     Author = 'Martin Howlett'
     Description = 'PowerShell wrapper around the Pi-hole v6 API.'
