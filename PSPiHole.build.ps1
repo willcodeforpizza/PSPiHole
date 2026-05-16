@@ -8,12 +8,10 @@ foreach ($module in $moduleList) {
     Install-Module -Name $module.ModuleName -RequiredVersion $module.ModuleVersion -Scope CurrentUser -Force
 }
 
-$plumberModule = Get-Module Plumber |
-    Where-Object { $PSItem.Version -eq [version]'0.0.30' } |
+$plumberDependency = $moduleList |
+    Where-Object { $PSItem.ModuleName -eq 'Plumber' } |
         Select-Object -First 1
-if (-not $plumberModule) {
-    Import-Module Plumber -RequiredVersion 0.0.30 -Force
-}
+Import-Module Plumber -RequiredVersion $plumberDependency.ModuleVersion
 Import-Module Plumber.Release -RequiredVersion 0.1.0 -Force
 
 . (Get-PlumberTaskLoader) -Config @{
