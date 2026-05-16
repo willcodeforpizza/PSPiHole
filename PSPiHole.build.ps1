@@ -8,12 +8,19 @@ foreach ($module in $moduleList) {
     Install-Module -Name $module.ModuleName -RequiredVersion $module.ModuleVersion -Scope CurrentUser -Force
 }
 
-Import-Module Plumber -RequiredVersion 0.0.27 -Force
+$plumberDependency = $moduleList |
+    Where-Object { $PSItem.ModuleName -eq 'Plumber' } |
+        Select-Object -First 1
+Import-Module Plumber -RequiredVersion $plumberDependency.ModuleVersion
 Import-Module Plumber.Release -RequiredVersion 0.1.0 -Force
 
 . (Get-PlumberTaskLoader) -Config @{
-    ModuleManifest       = 'PSPiHole.psd1'
-    PublicFunctionPrefix = 'Pihole'
+    ModuleManifest = 'PSPiHole.psd1'
+    Tasks          = @{
+        PublicFunctionPrefix = @{
+            Prefix = 'Pihole'
+        }
+    }
 }
 
 . (Get-PlumberReleaseTaskLoader) -Config @{

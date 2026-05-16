@@ -39,7 +39,7 @@ jobs:
       - name: Run Validate
         shell: pwsh
         run: |
-          Invoke-Build Validate
+          Invoke-Plumber -Task Validate -OutputMode CI
 
   release:
     name: Release
