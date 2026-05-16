@@ -27,14 +27,13 @@ Get-PiholeDnsRecord -Hostname '*.old.lan' | Remove-PiholeDnsRecord
 ## Quick Start
 
 ```powershell
-# Clone and import the module
-git clone https://github.com/willcodeforpizza/PSPiHole.git
-Import-Module ./PSPiHole/PSPiHole.psd1
+# Install
+Install-Module PSPiHole -Scope CurrentUser
 
-# Point it at your Pi-hole (password = web admin or app password)
+# Point at your Pi-hole (password = web admin or app password)
 Set-PiholeContext -Server pi.hole -Credential (Get-Credential)
 
-# Smoke test — auths lazily, lists local DNS records
+# Lists local DNS records
 Get-PiholeDnsRecord
 ```
 
