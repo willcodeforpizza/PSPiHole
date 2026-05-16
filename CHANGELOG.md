@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.7
+- Changed build validation to assume `Invoke-Plumber` is the public entry point
+- Removed build-file module installation and direct Plumber imports
+
 ## 0.1.6
 - Changed Plumber configuration to use the nested task layout
 - Updated Plumber dependency to 0.0.30
