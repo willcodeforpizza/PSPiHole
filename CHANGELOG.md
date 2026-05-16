@@ -2,7 +2,7 @@
 
 ## 0.1.6
 - Changed Plumber configuration to use the nested task layout
-- Updated Plumber dependency to 0.0.29
+- Updated Plumber dependency to 0.0.30
 
 ## 0.1.5
 - Fixed release workflow setup for PSResourceGet repository publishing

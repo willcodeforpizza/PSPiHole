@@ -39,12 +39,7 @@ jobs:
       - name: Run Validate
         shell: pwsh
         run: |
-          Invoke-Build Validate -Result BuildResult
-          $failedTasks = @($BuildResult.Tasks | Where-Object Error)
-          if ($failedTasks) {
-            $failedTasks | Select-Object Name, Error | Format-Table | Out-String | Write-Output
-            throw 'Validation failed.'
-          }
+          Invoke-Plumber -Task Validate -OutputMode CI
 
   release:
     name: Release
