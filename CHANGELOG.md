@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.8
+- Moved Plumber build dependencies to `Plumber.dependencies.psd1`
+
 ## 0.1.7
 - Changed build validation to assume `Invoke-Plumber` is the public entry point
 - Removed build-file module installation and direct Plumber imports

@@ -27,14 +27,22 @@ jobs:
         shell: pwsh
         run: |
           Set-PSRepository PSGallery -InstallationPolicy Trusted
-          (Import-PowerShellDataFile ./PSPiHole.psd1).ModuleList |
-              ForEach-Object {
-                Install-Module `
-                  -Name $_.ModuleName `
-                  -RequiredVersion $_.ModuleVersion `
-                  -Scope CurrentUser `
-                  -Force
-              }
+          $dependencies = (Import-PowerShellDataFile ./Plumber.dependencies.psd1).Modules
+          $plumber = $dependencies | Where-Object ModuleName -eq Plumber
+          $installSplat = @{
+            Name            = $plumber.ModuleName
+            RequiredVersion = $plumber.ModuleVersion
+            Scope           = 'CurrentUser'
+            Force           = $true
+          }
+          Install-Module @installSplat
+          $importSplat = @{
+            Name            = 'Plumber'
+            RequiredVersion = $plumber.ModuleVersion
+            ArgumentList    = @{ InstallMissingDependencies = $true }
+          }
+          Import-Module @importSplat
+          Install-PlumberDependency
 
       - name: Run Validate
         shell: pwsh
@@ -58,14 +66,22 @@ jobs:
         shell: pwsh
         run: |
           Set-PSRepository PSGallery -InstallationPolicy Trusted
-          (Import-PowerShellDataFile ./PSPiHole.psd1).ModuleList |
-              ForEach-Object {
-                Install-Module `
-                  -Name $_.ModuleName `
-                  -RequiredVersion $_.ModuleVersion `
-                  -Scope CurrentUser `
-                  -Force
-              }
+          $dependencies = (Import-PowerShellDataFile ./Plumber.dependencies.psd1).Modules
+          $plumber = $dependencies | Where-Object ModuleName -eq Plumber
+          $installSplat = @{
+            Name            = $plumber.ModuleName
+            RequiredVersion = $plumber.ModuleVersion
+            Scope           = 'CurrentUser'
+            Force           = $true
+          }
+          Install-Module @installSplat
+          $importSplat = @{
+            Name            = 'Plumber'
+            RequiredVersion = $plumber.ModuleVersion
+            ArgumentList    = @{ InstallMissingDependencies = $true }
+          }
+          Import-Module @importSplat
+          Install-PlumberDependency
 
       - name: Run Release
         shell: pwsh
@@ -75,12 +91,4 @@ jobs:
           GITHUB_RELEASE_CONFIRM: true
           PSGALLERY_PUBLISH_CONFIRM: true
         run: |
-          $repositoryStore = Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'PSResourceGet'
-          New-Item -Path $repositoryStore -ItemType Directory -Force | Out-Null
-          $repository = Get-PSResourceRepository -Name PSGallery -ErrorAction SilentlyContinue
-          if (-not $repository) {
-            Register-PSResourceRepository -PSGallery
-          }
-          Set-PSResourceRepository -Name PSGallery -Trusted
-
           Invoke-Plumber -Task Release -OutputMode CI
