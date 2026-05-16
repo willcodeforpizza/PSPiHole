@@ -83,4 +83,4 @@ jobs:
           }
           Set-PSResourceRepository -Name PSGallery -Trusted
 
-          Invoke-Build Release
+          Invoke-Plumber -Task Release -OutputMode CI
