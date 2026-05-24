@@ -2,7 +2,10 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+    tags:
+      - 'v*'
   pull_request:
 
 permissions:
@@ -11,7 +14,7 @@ permissions:
 jobs:
   test:
     name: ${{ matrix.os }}
-    if: github.event_name == 'pull_request'
+    if: github.ref_type != 'tag'
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -30,10 +33,55 @@ jobs:
           $dependencies = (Import-PowerShellDataFile ./Plumber.dependencies.psd1).Modules
           $plumber = $dependencies | Where-Object ModuleName -eq Plumber
           $installSplat = @{
-            Name            = $plumber.ModuleName
+            Name               = $plumber.ModuleName
+            RequiredVersion    = $plumber.ModuleVersion
+            Scope              = 'CurrentUser'
+            Force              = $true
+            SkipPublisherCheck = $true
+          }
+          Install-Module @installSplat
+          $importSplat = @{
+            Name            = 'Plumber'
             RequiredVersion = $plumber.ModuleVersion
-            Scope           = 'CurrentUser'
-            Force           = $true
+            ArgumentList    = @{ InstallMissingDependencies = $true }
+          }
+          Import-Module @importSplat
+          Install-PlumberDependency
+
+      - name: Run Validate
+        shell: pwsh
+        env:
+          PLUMBER_RELEASE_INTENT: true
+        run: |
+          Invoke-Plumber -Task Validate -OutputMode CI
+
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    if: github.ref_type == 'tag'
+    permissions:
+      contents: write
+    concurrency:
+      group: release-${{ github.ref }}
+      cancel-in-progress: false
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Install module dependencies
+        shell: pwsh
+        run: |
+          Set-PSRepository PSGallery -InstallationPolicy Trusted
+          $dependencies = (Import-PowerShellDataFile ./Plumber.dependencies.psd1).Modules
+          $plumber = $dependencies | Where-Object ModuleName -eq Plumber
+          $installSplat = @{
+            Name               = $plumber.ModuleName
+            RequiredVersion    = $plumber.ModuleVersion
+            Scope              = 'CurrentUser'
+            Force              = $true
+            SkipPublisherCheck = $true
           }
           Install-Module @installSplat
           $importSplat = @{
@@ -49,46 +97,10 @@ jobs:
         run: |
           Invoke-Plumber -Task Validate -OutputMode CI
 
-  release:
-    name: Release
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    permissions:
-      contents: write
-    concurrency:
-      group: release-${{ github.ref }}
-      cancel-in-progress: false
-
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Install module dependencies
-        shell: pwsh
-        run: |
-          Set-PSRepository PSGallery -InstallationPolicy Trusted
-          $dependencies = (Import-PowerShellDataFile ./Plumber.dependencies.psd1).Modules
-          $plumber = $dependencies | Where-Object ModuleName -eq Plumber
-          $installSplat = @{
-            Name            = $plumber.ModuleName
-            RequiredVersion = $plumber.ModuleVersion
-            Scope           = 'CurrentUser'
-            Force           = $true
-          }
-          Install-Module @installSplat
-          $importSplat = @{
-            Name            = 'Plumber'
-            RequiredVersion = $plumber.ModuleVersion
-            ArgumentList    = @{ InstallMissingDependencies = $true }
-          }
-          Import-Module @importSplat
-          Install-PlumberDependency
-
-      - name: Run Release
+      - name: Publish tagged release
         shell: pwsh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PSGALLERY_API_KEY: ${{ secrets.PSGALLERY_API_KEY }}
-          GITHUB_RELEASE_CONFIRM: true
-          PSGALLERY_PUBLISH_CONFIRM: true
         run: |
-          Invoke-Plumber -Task Release -OutputMode CI
+          Invoke-Plumber -Task PublishTaggedRelease -OutputMode CI
