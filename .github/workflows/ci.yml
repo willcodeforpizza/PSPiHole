@@ -2,7 +2,10 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+    tags:
+      - 'v*'
   pull_request:
 
 permissions:
@@ -11,7 +14,7 @@ permissions:
 jobs:
   test:
     name: ${{ matrix.os }}
-    if: github.event_name == 'pull_request'
+    if: github.ref_type != 'tag'
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -30,10 +33,11 @@ jobs:
           $dependencies = (Import-PowerShellDataFile ./Plumber.dependencies.psd1).Modules
           $plumber = $dependencies | Where-Object ModuleName -eq Plumber
           $installSplat = @{
-            Name            = $plumber.ModuleName
-            RequiredVersion = $plumber.ModuleVersion
-            Scope           = 'CurrentUser'
-            Force           = $true
+            Name               = $plumber.ModuleName
+            RequiredVersion    = $plumber.ModuleVersion
+            Scope              = 'CurrentUser'
+            Force              = $true
+            SkipPublisherCheck = $true
           }
           Install-Module @installSplat
           $importSplat = @{
@@ -52,7 +56,7 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.ref_type == 'tag'
     permissions:
       contents: write
     concurrency:
@@ -61,6 +65,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Verify tag is on main
+        shell: bash
+        run: |
+          git fetch --no-tags origin +refs/heads/main:refs/remotes/origin/main
+          git merge-base --is-ancestor HEAD origin/main
 
       - name: Install module dependencies
         shell: pwsh
@@ -69,10 +81,11 @@ jobs:
           $dependencies = (Import-PowerShellDataFile ./Plumber.dependencies.psd1).Modules
           $plumber = $dependencies | Where-Object ModuleName -eq Plumber
           $installSplat = @{
-            Name            = $plumber.ModuleName
-            RequiredVersion = $plumber.ModuleVersion
-            Scope           = 'CurrentUser'
-            Force           = $true
+            Name               = $plumber.ModuleName
+            RequiredVersion    = $plumber.ModuleVersion
+            Scope              = 'CurrentUser'
+            Force              = $true
+            SkipPublisherCheck = $true
           }
           Install-Module @installSplat
           $importSplat = @{
@@ -83,12 +96,17 @@ jobs:
           Import-Module @importSplat
           Install-PlumberDependency
 
-      - name: Run Release
+      - name: Run Validate
+        shell: pwsh
+        env:
+          PLUMBER_RELEASE_INTENT: true
+        run: |
+          Invoke-Plumber -Task Validate -OutputMode CI
+
+      - name: Publish tagged release
         shell: pwsh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PSGALLERY_API_KEY: ${{ secrets.PSGALLERY_API_KEY }}
-          GITHUB_RELEASE_CONFIRM: true
-          PSGALLERY_PUBLISH_CONFIRM: true
         run: |
-          Invoke-Plumber -Task Release -OutputMode CI
+          Invoke-Plumber -Task PublishTaggedRelease -OutputMode CI
