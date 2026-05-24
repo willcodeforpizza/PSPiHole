@@ -50,8 +50,6 @@ jobs:
 
       - name: Run Validate
         shell: pwsh
-        env:
-          PLUMBER_RELEASE_INTENT: true
         run: |
           Invoke-Plumber -Task Validate -OutputMode CI
 
@@ -100,6 +98,8 @@ jobs:
 
       - name: Run Validate
         shell: pwsh
+        env:
+          PLUMBER_RELEASE_INTENT: true
         run: |
           Invoke-Plumber -Task Validate -OutputMode CI
 
