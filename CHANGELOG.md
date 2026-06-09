@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.10
+- Added `-Scheme` to `Set-PiholeContext` for HTTP-only Pi-hole endpoints
+
 ## 0.1.9
 - Bumped Plumber dependency to 0.0.39 (picks up AST-aware Backticks/ToDo, PathSeparator rule, and other fixes)
 

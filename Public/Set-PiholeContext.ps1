@@ -14,6 +14,10 @@ function Set-PiholeContext {
     .PARAMETER Server
         Pi-hole server hostname or IP (e.g. 'pihole1.lan').
 
+    .PARAMETER Scheme
+        URI scheme for the Pi-hole API. Defaults to https. Use http for
+        Pi-hole instances that expose the web/API service without TLS.
+
     .PARAMETER Credential
         PSCredential whose Password is the Pi-hole web/app password. The
         username is ignored - Pi-hole has no username concept.
@@ -34,6 +38,11 @@ function Set-PiholeContext {
         will auth lazily on first call.
 
     .EXAMPLE
+        Set-PiholeContext -Server pihole1.lan -Scheme http -Credential (Get-Credential)
+
+        Configures an HTTP-only Pi-hole instance.
+
+    .EXAMPLE
         $env:PIHOLE_PASSWORD = '...'
         Set-PiholeContext -Server pihole1.lan -SkipCertificateCheck
 
@@ -50,6 +59,10 @@ function Set-PiholeContext {
         [Parameter(Mandatory)]
         [string]
         $Server,
+
+        [ValidateSet('http', 'https')]
+        [string]
+        $Scheme = 'https',
 
         [Parameter(ParameterSetName = 'Credential')]
         [pscredential]
@@ -82,7 +95,7 @@ function Set-PiholeContext {
         $script:PiholeContext = [pscustomobject]@{
             PSTypeName           = 'PSPiHole.Context'
             Server               = $Server
-            BaseUri              = "https://$Server/api"
+            BaseUri              = "${Scheme}://$Server/api"
             SkipCertificateCheck = [bool]$SkipCertificateCheck
             Credential           = $Credential
             Session              = $null
