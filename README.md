@@ -18,6 +18,12 @@ Add-PiholeDnsRecord -Hostname ha.local.mydomain.com -IPAddress 10.0.0.42
 Get-PiholeDnsRecord -Hostname '*.old.lan' | Remove-PiholeDnsRecord
 ```
 
+For an HTTP-only Pi-hole API:
+
+```powershell
+Set-PiholeContext -Server pi.hole -Scheme http -Credential (Get-Credential)
+```
+
 ## Requirements
 
 - PowerShell 7.0 or later
@@ -47,7 +53,7 @@ If neither `-Credential` nor `-Password` is supplied, `Set-PiholeContext` falls 
 
 | Function | Purpose |
 |---|---|
-| `Set-PiholeContext` | Configure the default server, credential, and TLS behaviour.|
+| `Set-PiholeContext` | Configure the default server, URI scheme, credential, and TLS behaviour.|
 | `Get-PiholeContext` | Return a sanitised view of the current context.|
 | `Clear-PiholeContext` | Drop the default context from the Pi-Hole server and local cache. |
 

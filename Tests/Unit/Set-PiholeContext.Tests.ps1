@@ -41,6 +41,19 @@ Describe 'Set-PiholeContext' {
             }
         }
 
+        It 'supports HTTP-only Pi-hole endpoints' {
+            Set-PiholeContext -Server 'pihole.test' -Scheme http -Credential (New-PiholeTestCredential)
+
+            InModuleScope PSPiHole {
+                $script:PiholeContext.BaseUri | Should -Be 'http://pihole.test/api'
+            }
+        }
+
+        It 'rejects unsupported URI schemes' {
+            {Set-PiholeContext -Server 'pihole.test' -Scheme ftp -Credential (New-PiholeTestCredential)} |
+                Should -Throw
+        }
+
         It 'returns the context object with -PassThru' {
             $result = Set-PiholeContext -Server 'pihole.test' -Credential (New-PiholeTestCredential) -PassThru
 
