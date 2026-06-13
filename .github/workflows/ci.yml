@@ -44,6 +44,7 @@ jobs:
           }
           Import-Module @importSplat
           Install-PlumberDependency
+          Install-PlumberDependency -Build -Path .
 
       - name: Run Validate
         shell: pwsh
@@ -89,6 +90,7 @@ jobs:
           }
           Import-Module @importSplat
           Install-PlumberDependency
+          Install-PlumberDependency -Build -Path .
 
       - name: Run Validate
         shell: pwsh
