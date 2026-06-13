@@ -13,6 +13,8 @@
     }
 }
 
-. (Get-PlumberReleaseTaskLoader) -Config @{
-    ModuleManifest = 'PSPiHole.psd1'
+if (Get-Command Get-PlumberReleaseTaskLoader -ErrorAction SilentlyContinue) {
+    . (Get-PlumberReleaseTaskLoader) -Config @{
+        ModuleManifest = 'PSPiHole.psd1'
+    }
 }
