@@ -33,17 +33,14 @@ jobs:
           $dependencies = (Import-PowerShellDataFile ./Plumber.dependencies.psd1).Modules
           $plumber = $dependencies | Where-Object ModuleName -eq Plumber
           $installSplat = @{
-            Name               = $plumber.ModuleName
-            RequiredVersion    = $plumber.ModuleVersion
-            Scope              = 'CurrentUser'
-            Force              = $true
-            SkipPublisherCheck = $true
+            Name            = $plumber.ModuleName
+            RequiredVersion = $plumber.ModuleVersion
+            Scope           = 'CurrentUser'
           }
           Install-Module @installSplat
           $importSplat = @{
             Name            = 'Plumber'
             RequiredVersion = $plumber.ModuleVersion
-            ArgumentList    = @{ InstallMissingDependencies = $true }
           }
           Import-Module @importSplat
           Install-PlumberDependency
@@ -81,17 +78,14 @@ jobs:
           $dependencies = (Import-PowerShellDataFile ./Plumber.dependencies.psd1).Modules
           $plumber = $dependencies | Where-Object ModuleName -eq Plumber
           $installSplat = @{
-            Name               = $plumber.ModuleName
-            RequiredVersion    = $plumber.ModuleVersion
-            Scope              = 'CurrentUser'
-            Force              = $true
-            SkipPublisherCheck = $true
+            Name            = $plumber.ModuleName
+            RequiredVersion = $plumber.ModuleVersion
+            Scope           = 'CurrentUser'
           }
           Install-Module @installSplat
           $importSplat = @{
             Name            = 'Plumber'
             RequiredVersion = $plumber.ModuleVersion
-            ArgumentList    = @{ InstallMissingDependencies = $true }
           }
           Import-Module @importSplat
           Install-PlumberDependency
