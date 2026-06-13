@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased
+- Changed CI dependency bootstrap to use Plumber 0.0.81's explicit dependency install flow.
+
 ## 0.1.10
 - Added `-Scheme` to `Set-PiholeContext` for HTTP-only Pi-hole endpoints
 
